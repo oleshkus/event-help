@@ -44,6 +44,20 @@ const i18n = createI18n({
     fallbackLocale: 'English',
     messages: {
         English: {
+            fields: {
+                validation: {
+                    required: 'This field is required',
+                    email: 'This field must be an email',
+                    password: 'This field must be a password',
+                    password_confirmation: 'This field must be a password confirmation',
+                    min: 'This field must be at least {min} characters',
+                    max: 'This field must be at most {max} characters',
+                    confirmed: 'This field must be confirmed',
+                    unique: 'This field must be unique',
+                    date: 'This field must be a date',
+                    dateinpast: 'This field must be a future date',
+                },
+            },
             ui: {
                 tabs: {
                     home: 'Home',
@@ -55,7 +69,6 @@ const i18n = createI18n({
                     account: 'Account',
                     signin: 'Sign in',
                     register: 'Register',
-
                 },
                 actions: {
                     create: 'Create',
@@ -70,7 +83,6 @@ const i18n = createI18n({
                     back: 'Back',
                     search: 'Search',
                     confirmDelete: 'Are you sure you want to delete this item?',
-
                     success: {
                         create: 'Item created successfully',
                         edit: 'Item edited successfully',
@@ -82,10 +94,23 @@ const i18n = createI18n({
                         delete: 'Error deleting item',
                     },
                 },
-
             }
         },
         Russian: {
+            fields: {
+                validation: {
+                    required: 'Это поле обязательно',
+                    email: 'Это поле должно быть электронной почтой',
+                    password: 'Это поле должно быть паролем',
+                    password_confirmation: 'Это поле должно быть подтверждением пароля',
+                    min: 'Это поле должно быть не менее {min} символов',
+                    max: 'Это поле должно быть не более {max} символов',
+                    confirmed: 'Это поле должно быть подтверждено',
+                    unique: 'Это поле должно быть уникальным',
+                    date: 'Это поле должно быть датой',
+                    dateinpast: 'Это поле должно быть будущей датой',
+                },
+            },
             ui: {
                 tabs: {
                     home: 'Главная',
@@ -111,7 +136,6 @@ const i18n = createI18n({
                     back: 'Назад',
                     search: 'Поиск',
                     confirmDelete: 'Вы уверены, что хотите удалить этот элемент?',
-
                     success: {
                         create: 'Элемент успешно создан',
                         edit: 'Элемент успешно отредактирован',
@@ -126,4 +150,4 @@ const i18n = createI18n({
             }
         }
     }
-})
+});
