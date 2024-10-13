@@ -4,15 +4,14 @@ import { inject, ref } from 'vue';
 import { Money, Reading, Setting, SwitchButton, User } from "@element-plus/icons-vue";
 
 const user = ref(usePage().props.user);
-const page = inject('page');
 const dialogVisible = ref(false);
 </script>
 
 <template>
-    <el-menu mode="horizontal" class="flex items-center justify-between">
+    <el-menu router mode="horizontal" class="flex items-center justify-between">
         <div class="left flex items-center">
-            <el-menu-item index="1" @click="page = 'tab-home'">{{ $t('ui.tabs.home') }}</el-menu-item>
-            <el-menu-item index="2" @click="page = 'tab-events'">{{ $t('ui.tabs.events') }}</el-menu-item>
+            <el-menu-item index="/" @click="page = 'tab-home'">{{ $t('ui.tabs.home') }}</el-menu-item>
+            <el-menu-item index="/events" @click="page = 'tab-events'">{{ $t('ui.tabs.events') }}</el-menu-item>
         </div>
         <div class="right flex items-center">
             <p v-if="usePage().props.logged_in" class="mr-3">{{ user.name }}</p>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use Inertia\Inertia;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,19 @@ class EventController extends Controller
     {
         $events = Event::where('user_id', Auth::id())->with('performances')->get();
         return response()->json($events);
+
+//        $events = Event::where('user_id', Auth::id())->with('performances')->get();
+//        return Inertia::render('Events/Index', [
+//            'events' => $events,
+//        ]);
+    }
+
+    public function test()
+    {
+        $events = Event::where('user_id', Auth::id())->with('performances')->get();
+        return Inertia::render('Main/Events', [
+            'events' => $events,
+        ]);
     }
 
     /**

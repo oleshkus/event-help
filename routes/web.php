@@ -22,6 +22,7 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -33,6 +34,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/events/{event}', [EventController::class, 'show']); // Get a single event
     Route::put('/api/events/{event}', [EventController::class, 'update']); // Update an event
     Route::delete('/api/events/{event}', [EventController::class, 'destroy']); // Delete an event
+    Route::get('/events', [EventController::class, 'test']); // test
+
+
 
     // Performances
     Route::post('/api/events/{eventId}/performances', [PerformanceController::class, 'store']); // Create a new performance

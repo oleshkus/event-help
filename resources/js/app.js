@@ -44,6 +44,11 @@ const i18n = createI18n({
     fallbackLocale: 'English',
     messages: {
         English: {
+            text: {
+                noevents: 'No events found',
+                deleteEvent: 'Do you want to delete this event?',
+                deleteAllEvents: 'Do you want to delete all events?',
+            },
             fields: {
                 validation: {
                     required: 'This field is required',
@@ -79,6 +84,7 @@ const i18n = createI18n({
                     save: 'Save',
                     cancel: 'Cancel',
                     close: 'Close',
+                    open: 'Open',
                     confirm: 'Confirm',
                     back: 'Back',
                     search: 'Search',
@@ -97,6 +103,11 @@ const i18n = createI18n({
             }
         },
         Russian: {
+            text: {
+                noevents: 'События не найдены',
+                deleteEvent: 'Вы хотите удалить это событие?',
+                deleteAllEvents: 'Вы хотите удалить все события?',
+            },
             fields: {
                 validation: {
                     required: 'Это поле обязательно',
@@ -132,6 +143,7 @@ const i18n = createI18n({
                     save: 'Сохранить',
                     cancel: 'Отменить',
                     close: 'Закрыть',
+                    open: 'Открыть',
                     confirm: 'Подтвердить',
                     back: 'Назад',
                     search: 'Поиск',

@@ -3,7 +3,7 @@ import { ref, reactive, onMounted } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { useI18n } from 'vue-i18n';
 import axios from 'axios';
-import { format } from 'date-fns';
+import EventCard from "@/Components/EventCard.vue";
 
 const { t } = useI18n();
 const dialogVisible = ref(false);
@@ -16,6 +16,7 @@ const form = reactive({
 const rules = reactive<FormRules>({
     title: [
         { required: true, message: t('fields.validation.required'), trigger: 'blur' },
+        { max: 80, message: t('fields.validation.max', { max: 80 }), trigger: 'blur' },
     ],
     start_time: [
         { required: true, message: t('fields.validation.required'), trigger: 'change' },
@@ -62,6 +63,19 @@ const handleReset = () => {
     formRef.value.resetFields();
 };
 
+const handleOpen = (id: number) => {
+    console.log(`Open event with id: ${id}`);
+};
+
+const handleDelete = async (id: number) => {
+    try {
+        await axios.delete(`/api/events/${id}`);
+        await fetchEvents();
+    } catch (error) {
+        console.error('Error deleting event:', error);
+    }
+};
+
 onMounted(() => {
     fetchEvents();
 });
@@ -75,14 +89,9 @@ onMounted(() => {
 
     <div v-loading="loading" class="events-container">
         <el-empty v-if="!loading && events.length === 0" description="You have no events" />
-        <el-row v-else :gutter="20">
-            <el-col v-for="event in events" :key="event.id" :span="8">
-                <el-card>
-                    <h3>{{ event.title }}</h3>
-                    <p>{{ format(new Date(event.start_time), 'dd.MM.yyyy HH:mm') }}</p>
-                </el-card>
-            </el-col>
-        </el-row>
+        <div class="container grid xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-5">
+            <event-card v-for="event in events" :key="event.id" :id="event.id" :title="event.title" :start_time="event.start_time" @open="handleOpen(event.id)" @delete="handleDelete(event.id)" />
+        </div>
     </div>
 
     <el-dialog v-model="dialogVisible" :title="t('ui.actions.createEvent')" width="500">
@@ -114,27 +123,5 @@ onMounted(() => {
     flex-wrap: wrap;
     gap: 16px;
     position: relative;
-}
-
-.event-card {
-    border: 1px solid #dcdfe6;
-    border-radius: 4px;
-    padding: 16px;
-    width: calc(33.333% - 16px);
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-}
-
-.event-card h3 {
-    margin: 0 0 8px;
-}
-
-.event-card p {
-    margin: 0;
-    color: #606266;
-}
-
-.error-message {
-    color: red;
-    margin-top: 10px;
 }
 </style>
