@@ -6,8 +6,6 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h, createSSRApp} from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { createI18n } from 'vue-i18n';
-import createServer from '@inertiajs/vue3/server';
-import { renderToString } from '@vue/server-renderer';
 
 import { ID_INJECTION_KEY } from 'element-plus'
 
