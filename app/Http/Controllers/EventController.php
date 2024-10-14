@@ -29,8 +29,10 @@ class EventController extends Controller
     public function test()
     {
         $events = Event::where('user_id', Auth::id())->with('performances')->get();
-        return Inertia::render('Main/Events', [
+        return Inertia::render('Events', [
             'events' => $events,
+            'logged_in' => auth()->check(),
+            'user' => auth()->user(),
         ]);
     }
 
@@ -69,5 +71,11 @@ class EventController extends Controller
     {
         $event->delete();
         return response()->json(['message' => 'Event deleted successfully'], 200);
+    }
+
+    public function destroy_all()
+    {
+        Event::where('user_id', Auth::id())->delete();
+        return response()->json(['message' => 'All events deleted successfully'], 200);
     }
 }

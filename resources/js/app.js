@@ -3,9 +3,11 @@ import './bootstrap';
 
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { createApp, h } from 'vue';
+import { createApp, h, createSSRApp} from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { createI18n } from 'vue-i18n';
+import createServer from '@inertiajs/vue3/server';
+import { renderToString } from '@vue/server-renderer';
 
 import { ID_INJECTION_KEY } from 'element-plus'
 
@@ -21,8 +23,8 @@ createInertiaApp({
             `./Pages/${name}.vue`,
             import.meta.glob('./Pages/**/*.vue'),
         ),
-    setup({ el, App, props, plugin }) {
-        return createApp({ render: () => h(App, props) })
+    setup({el, App, props, plugin}) {
+        return createApp({render: () => h(App, props)})
             .use(plugin)
             .use(ZiggyVue)
             .use(ElementPlus)
@@ -37,19 +39,22 @@ createInertiaApp({
         color: '#4B5563',
     },
 
-});
+})
 
-const i18n = createI18n({
+ const i18n = createI18n({
     locale: 'English',
     fallbackLocale: 'English',
     messages: {
         English: {
             text: {
-                noevents: 'No events found',
+                event_name: 'Event name',
+                starting_time: 'Starting time',
+                no_events: 'No events found',
                 deleteEvent: 'Do you want to delete this event?',
                 deleteAllEvents: 'Do you want to delete all events?',
+
             },
-            fields: {
+            form: {
                 validation: {
                     required: 'This field is required',
                     email: 'This field must be an email',
@@ -80,9 +85,11 @@ const i18n = createI18n({
                     createEvent: 'Create event',
                     edit: 'Edit',
                     delete: 'Delete',
+                    deleted: 'Deleted',
                     deleteAll: 'Delete all',
                     save: 'Save',
                     cancel: 'Cancel',
+                    reset: 'Reset',
                     close: 'Close',
                     open: 'Open',
                     confirm: 'Confirm',
@@ -104,11 +111,13 @@ const i18n = createI18n({
         },
         Russian: {
             text: {
-                noevents: 'События не найдены',
+                event_name: 'Название события',
+                starting_time: 'Время начала',
+                no_events: 'События не найдены',
                 deleteEvent: 'Вы хотите удалить это событие?',
                 deleteAllEvents: 'Вы хотите удалить все события?',
             },
-            fields: {
+            form: {
                 validation: {
                     required: 'Это поле обязательно',
                     email: 'Это поле должно быть электронной почтой',
@@ -139,9 +148,11 @@ const i18n = createI18n({
                     createEvent: 'Создать событие',
                     edit: 'Редактировать',
                     delete: 'Удалить',
+                    deleted: 'Удалено',
                     deleteAll: 'Удалить все',
                     save: 'Сохранить',
                     cancel: 'Отменить',
+                    reset: 'Сбросить',
                     close: 'Закрыть',
                     open: 'Открыть',
                     confirm: 'Подтвердить',

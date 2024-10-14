@@ -12,8 +12,9 @@ import { Inertia } from '@inertiajs/inertia';
 import { ElButton, ElButtonGroup, ElEmpty, ElForm, ElFormItem, ElInput, ElDatePicker, ElDialog } from 'element-plus';
 
 // Переменные
-const page = usePage();
-const events = ref(page.props.value?.events || []);
+defineProps([
+    'events',
+]);
 const { t } = useI18n();
 const dialogVisible = ref(false);
 const loading = ref(true);
@@ -76,7 +77,6 @@ const deleteConfirmation = (id) => {
     )
         .then(() => {
             handleDelete(id);
-            Inertia.reload();
             ElMessage({
                 type: 'success',
                 message: `${t('ui.actions.deleted')}`,
@@ -91,12 +91,14 @@ const deleteConfirmation = (id) => {
 }
 
 const handleOpen = async (id) => {
-    Inertia.get(`/api/events/${id}`);
+    Inertia.get(`/events/${id}`);
 }
 
 const handleDelete = async (id) => {
-    await axios.delete(`/api/events/${id}`);
-    Inertia.reload();
+    await axios.delete(`/api/events/${id}`)
+        .then(() => {
+            Inertia.reload();
+        });
 }
 
 const handleSubmit = async () => {
@@ -104,8 +106,9 @@ const handleSubmit = async () => {
     await formRef.value.validate(async (valid) => {
         if (valid) {
             try {
-                await axios.post('/api/events', form);
-                Inertia.reload();
+                await axios.post('/api/events', form).then(() => {
+                    Inertia.reload();
+                }),
                 dialogVisible.value = false;
             } catch (error) {
                 if (error.response && error.response.status === 422) {
@@ -138,7 +141,7 @@ onMounted(() => {
         </el-button-group>
 
         <div v-loading="loading" class="flex min-h-[20rem] justify-center events-container">
-            <el-empty v-if="!loading && events.length === 0" :description="$t('text.noevents')"/>
+            <el-empty v-if="!loading && events.length === 0" :description="t('text.no_events')"/>
             <div
                 class="grid w-full grid-rows-2 xs:grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 <event-card @delete="deleteConfirmation(event.id)" @open="handleOpen(event.id)" v-for="event in events"
@@ -149,11 +152,11 @@ onMounted(() => {
         <el-dialog v-model="dialogVisible" :title="t('ui.actions.createEvent')" width="500">
             <el-form ref="formRef" :model="form" :rules="rules" class="flex justify-center flex-col" label-width="auto"
                      status-icon>
-                <el-form-item label="Название события" prop="title">
-                    <el-input v-model="form.title"/>
+                <el-form-item :label="t('text.event_name')" prop="title">
+                    <el-input v-model="form.title" :placeholder="t('text.event_name')" />
                 </el-form-item>
-                <el-form-item label="Дата и время начала" prop="start_time">
-                    <el-date-picker v-model="form.start_time" type="datetime" placeholder="Выберите дату и время"
+                <el-form-item :label="t('text.starting_time')" prop="start_time">
+                    <el-date-picker v-model="form.start_time" type="datetime" :placeholder="t('text.starting_time')"
                                     style="width: 100%"/>
                 </el-form-item>
             </el-form>

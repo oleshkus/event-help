@@ -31,9 +31,10 @@ Route::middleware('auth')->group(function () {
     // Events
     Route::get('/api/events', [EventController::class, 'index']); // Get all events
     Route::post('/api/events', [EventController::class, 'store']); // Create a new event
-    Route::get('/api/events/{event}', [EventController::class, 'show']); // Get a single event
+    Route::get('/events/{event}', [EventController::class, 'show']); // Get a single event
     Route::put('/api/events/{event}', [EventController::class, 'update']); // Update an event
     Route::delete('/api/events/{event}', [EventController::class, 'destroy']); // Delete an event
+    Route::delete('/api/events', [EventController::class, 'destroy_all']); // Delete all performances for an event
     Route::get('/events', [EventController::class, 'test']); // test
 
 
