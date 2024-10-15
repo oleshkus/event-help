@@ -2,11 +2,16 @@
 import { usePage, router } from "@inertiajs/vue3";
 import { ref, computed } from 'vue';
 import { Money, Reading, Setting, SwitchButton, User } from "@element-plus/icons-vue";
+import {useI18n} from "vue-i18n";
+import { ElMenu, ElMenuItem, ElSubMenu, ElIcon, ElDialog } from 'element-plus';
+import 'element-plus/dist/index.css';
 
+const { t } = useI18n();
 const user = ref(usePage().props.user);
 const dialogVisible = ref(false);
 
 const currentRoute = computed(() => usePage().url);
+
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script setup>
 import BaseLayout from '@/Layouts/BaseLayout.vue';
-import { Head, usePage } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import Header from '@/Components/Header.vue';
 import { ref, reactive, markRaw, onMounted } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
@@ -12,9 +12,9 @@ import { Inertia } from '@inertiajs/inertia';
 import { ElButton, ElButtonGroup, ElEmpty, ElForm, ElFormItem, ElInput, ElDatePicker, ElDialog } from 'element-plus';
 
 // Переменные
-defineProps([
-    'events',
-]);
+const props = defineProps({
+    events: Array,
+});
 const { t } = useI18n();
 const dialogVisible = ref(false);
 const loading = ref(true);
@@ -108,7 +108,7 @@ const handleSubmit = async () => {
             try {
                 await axios.post('/api/events', form).then(() => {
                     Inertia.reload();
-                }),
+                });
                 dialogVisible.value = false;
             } catch (error) {
                 if (error.response && error.response.status === 422) {
@@ -136,21 +136,21 @@ onMounted(() => {
     <BaseLayout>
         <Header/>
         <el-button-group class="mt-5">
-            <el-button type="primary" @click="dialogVisible = true">{{ t('ui.actions.create') }}</el-button>
+            <el-button type="primary" @click="dialogVisible.value = true">{{ t('ui.actions.create') }}</el-button>
             <el-button type="danger" @click="deleteAllConfirmation" plain>{{ t('ui.actions.deleteAll') }}</el-button>
         </el-button-group>
 
         <div v-loading="loading" class="flex min-h-[20rem] justify-center events-container">
-            <el-empty v-if="!loading && events.length === 0" :description="t('text.no_events')"/>
+            <el-empty v-if="!loading && props.events && props.events.length === 0" :description="t('text.no_events')"/>
             <div
                 class="grid w-full grid-rows-2 xs:grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                <event-card @delete="deleteConfirmation(event.id)" @open="handleOpen(event.id)" v-for="event in events"
+                <event-card @delete="deleteConfirmation(event.id)" @open="handleOpen(event.id)" v-for="event in props.events"
                             :key="event.id" :id="event.id" :title="event.title" :start_time="event.start_time"/>
             </div>
         </div>
 
-        <el-dialog v-model="dialogVisible" :title="t('ui.actions.createEvent')" width="500">
-            <el-form ref="formRef" :model="form" :rules="rules" class="flex justify-center flex-col" label-width="auto"
+        <el-dialog v-model="dialogVisible.value" :title="t('ui.actions.createEvent')" width="500">
+            <el-form ref="formRef.value" :model="form" :rules="rules" class="flex justify-center flex-col" label-width="auto"
                      status-icon>
                 <el-form-item :label="t('text.event_name')" prop="title">
                     <el-input v-model="form.title" :placeholder="t('text.event_name')" />
@@ -163,11 +163,11 @@ onMounted(() => {
             <template #footer>
                 <div class="dialog-footer">
                     <el-button type="danger" @click="handleReset">{{ t('ui.actions.reset') }}</el-button>
-                    <el-button @click="dialogVisible = false">{{ t('ui.actions.cancel') }}</el-button>
+                    <el-button @click="dialogVisible.value = false">{{ t('ui.actions.cancel') }}</el-button>
                     <el-button type="primary" @click="handleSubmit">{{ t('ui.actions.create') }}</el-button>
                 </div>
             </template>
-            <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+            <div v-if="errorMessage.value" class="error-message">{{ errorMessage.value }}</div>
         </el-dialog>
     </BaseLayout>
 </template>

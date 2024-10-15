@@ -3,8 +3,8 @@ import './bootstrap';
 
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { createApp, h, createSSRApp} from 'vue';
-import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import { createApp, h} from 'vue';
+import { ZiggyVue } from 'ziggy-js';
 import { createI18n } from 'vue-i18n';
 
 import { ID_INJECTION_KEY } from 'element-plus'
@@ -14,32 +14,7 @@ import 'element-plus/dist/index.css'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
-createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
-    resolve: (name) =>
-        resolvePageComponent(
-            `./Pages/${name}.vue`,
-            import.meta.glob('./Pages/**/*.vue'),
-        ),
-    setup({el, App, props, plugin}) {
-        return createApp({render: () => h(App, props)})
-            .use(plugin)
-            .use(ZiggyVue)
-            .use(ElementPlus)
-            .use(i18n)
-            .provide(ID_INJECTION_KEY, {
-                prefix: 1024,
-                current: 0,
-            })
-            .mount(el);
-    },
-    progress: {
-        color: '#4B5563',
-    },
-
-})
-
- const i18n = createI18n({
+const i18n = createI18n({
     locale: 'English',
     fallbackLocale: 'English',
     messages: {
@@ -50,7 +25,6 @@ createInertiaApp({
                 no_events: 'No events found',
                 deleteEvent: 'Do you want to delete this event?',
                 deleteAllEvents: 'Do you want to delete all events?',
-
             },
             form: {
                 validation: {
@@ -79,6 +53,8 @@ createInertiaApp({
                     register: 'Register',
                 },
                 actions: {
+                    new_performance: 'New performance',
+                    back: 'Back',
                     create: 'Create',
                     createEvent: 'Create event',
                     edit: 'Edit',
@@ -142,6 +118,8 @@ createInertiaApp({
                     register: 'Регистрация',
                 },
                 actions: {
+                    new_performance: 'Новое событие',
+                    back: 'Назад',
                     create: 'Создать',
                     createEvent: 'Создать событие',
                     edit: 'Редактировать',
@@ -171,4 +149,28 @@ createInertiaApp({
             }
         }
     }
+});
+
+createInertiaApp({
+    title: (title) => `${title} - ${appName}`,
+    resolve: (name) =>
+        resolvePageComponent(
+            `./Pages/${name}.vue`,
+            import.meta.glob('./Pages/**/*.vue'),
+        ),
+    setup({el, App, props, plugin}) {
+        return createApp({render: () => h(App, props)})
+            .use(plugin)
+            .use(ZiggyVue)
+            .use(ElementPlus)
+            .use(i18n)
+            .provide(ID_INJECTION_KEY, {
+                prefix: 1024,
+                current: 0,
+            })
+            .mount(el);
+    },
+    progress: {
+        color: '#4B5563',
+    },
 });

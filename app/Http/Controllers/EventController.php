@@ -58,7 +58,9 @@ class EventController extends Controller
 
     public function show(Event $event)
     {
-        return response()->json($event);
+        return Inertia::render('Event', [
+            'event' => $event,
+        ]);
     }
 
     public function update(Request $request, Event $event)

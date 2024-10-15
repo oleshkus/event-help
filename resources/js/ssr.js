@@ -2,7 +2,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import createServer from '@inertiajs/vue3/server';
 import { renderToString } from '@vue/server-renderer';
 import { createSSRApp, h } from 'vue';
-import { ZiggyVue } from 'ziggy';
+import { ZiggyVue } from 'ziggy-js';
 
 const appName = process.env.VITE_APP_NAME || 'Laravel';
 
