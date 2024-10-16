@@ -12,6 +12,7 @@ class CreatePerformancesTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('location')->nullable();
+            $table->string('description');
             $table->json('participants')->nullable();
             $table->integer('expected_duration');
             $table->timestamp('actual_start_time')->nullable();

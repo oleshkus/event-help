@@ -1,185 +1,121 @@
 <script setup>
-import BaseLayout from '@/Layouts/BaseLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import Header from '@/Components/Header.vue';
-import { ref, reactive, markRaw, onMounted } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import { useI18n } from 'vue-i18n';
-import axios from 'axios';
-import { Delete } from '@element-plus/icons-vue';
-import EventCard from '@/Components/EventCard.vue';
-import { Inertia } from '@inertiajs/inertia';
-import { ElButton, ElButtonGroup, ElEmpty, ElForm, ElFormItem, ElInput, ElDatePicker, ElDialog } from 'element-plus';
+import BaseLayout from "@/Layouts/BaseLayout.vue";
+import { Head } from "@inertiajs/vue3";
+import Header from "@/Components/Header.vue";
+import { defineProps, ref, reactive, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { CirclePlusFilled, Delete, Minus, Plus } from "@element-plus/icons-vue";
+import { ElEmpty, ElInput, ElButton, ElForm, ElFormItem, ElTooltip, ElMessage } from "element-plus";
+import axios from "axios";
+import PerformanceItem from "@/Components/PerformanceItem.vue";
+import PerformanceItemForm from "@/Components/PerformanceItemForm.vue";
 
-// Переменные
-const props = defineProps({
-    events: Array,
-});
 const { t } = useI18n();
-const dialogVisible = ref(false);
-const loading = ref(true);
-const form = reactive({
-    title: '',
-    start_time: '',
+const goBack = () => {
+    window.history.back();
+};
+
+const curTime = ref(new Date().toLocaleTimeString());
+const curDate = ref(new Date().toLocaleDateString());
+
+const props = defineProps({
+    event: Object,
+    performances: Array,
 });
 
-// Правила валидации
-const rules = {
-    title: [
-        { required: true, message: t('form.validation.required'), trigger: 'blur' },
-        { max: 80, message: t('form.validation.max', { max: 80 }), trigger: 'blur' },
-    ],
-    start_time: [
-        { required: true, message: t('form.validation.required'), trigger: 'change' },
-    ],
-};
-const formRef = ref(null);
-const errorMessage = ref('');
+const loading = ref(true);
+const isEditing = ref(false);
+const newPerformance = reactive({
+    title: '',
+    expected_duration: { hours: 0, minutes: 0 },
+    location: '',
+    participants: [],
+    description: '',
+    start_time: '',
+    end_time: ''
+});
 
-const deleteAllConfirmation = () => {
-    ElMessageBox.confirm(
-        `${t('text.deleteAllEvents')}`,
-        'Warning',
-        {
-            confirmButtonText: `${t('ui.actions.delete')}`,
-            cancelButtonText: `${t('ui.actions.cancel')}`,
-            type: 'warning',
-            icon: markRaw(Delete),
-        }
-    )
-        .then(() => {
-            axios.delete('/api/events').then(() => {
-                Inertia.reload();
-                ElMessage({
-                    type: 'success',
-                    message: `${t('ui.actions.deleted')}`,
-                });
-            });
-        })
-        .catch(() => {
-            ElMessage({
-                type: 'info',
-                message: 'Delete canceled',
-            });
-        });
-}
-
-const deleteConfirmation = (id) => {
-    ElMessageBox.confirm(
-        `${t('text.deleteEvent')}`,
-        'Warning',
-        {
-            confirmButtonText: `${t('ui.actions.delete')}`,
-            cancelButtonText: `${t('ui.actions.cancel')}`,
-            type: 'warning',
-            icon: markRaw(Delete),
-        }
-    )
-        .then(() => {
-            handleDelete(id);
-            ElMessage({
-                type: 'success',
-                message: `${t('ui.actions.deleted')}`,
-            });
-        })
-        .catch(() => {
-            ElMessage({
-                type: 'info',
-                message: 'Delete canceled',
-            });
-        });
-}
-
-const handleOpen = async (id) => {
-    Inertia.get(`/events/${id}`);
-}
-
-const handleDelete = async (id) => {
-    await axios.delete(`/api/events/${id}`)
-        .then(() => {
-            Inertia.reload();
-        });
-}
-
-const handleSubmit = async () => {
-    if (!formRef.value) return;
-    await formRef.value.validate(async (valid) => {
-        if (valid) {
-            try {
-                await axios.post('/api/events', form).then(() => {
-                    Inertia.reload();
-                });
-                dialogVisible.value = false;
-            } catch (error) {
-                if (error.response && error.response.status === 422) {
-                    errorMessage.value = 'Ошибка валидации: ' + error.response.data.message;
-                } else {
-                    console.error('Error creating event:', error);
-                }
-            }
-        }
-    });
+const addParticipant = () => {
+    newPerformance.participants.push('');
 };
 
-const handleReset = () => {
-    if (!formRef.value) return;
-    formRef.value.resetFields();
+const removeParticipant = (index) => {
+    newPerformance.participants.splice(index, 1);
+};
+
+const savePerformance = async (performance) => {
+    try {
+        await axios.post(`/api/events/${props.event.id}/performances`, {
+            title: performance.title,
+            expected_duration: performance.durationHours * 60 + performance.durationMinutes,
+            location: performance.location || 'Empty',
+            participants: performance.participants.length ? performance.participants : ['Empty'],
+            description: performance.description || 'Empty',
+            start_time: performance.start_time,
+            end_time: performance.end_time
+        });
+        ElMessage.success('Performance saved successfully.');
+        isEditing.value = false;
+        // Reload the page or update the performances list
+    } catch (error) {
+        ElMessage.error('Error saving performance.');
+        console.error('Error saving performance:', error);
+    }
 };
 
 onMounted(() => {
     loading.value = false;
+    setInterval(() => {
+        curTime.value = new Date().toLocaleTimeString();
+        curDate.value = new Date().toLocaleDateString()
+    }, 1000);
 });
 </script>
 
 <template>
-    <Head title="Events"/>
-    <BaseLayout>
+    <Head title="Event"/>
+    <BaseLayout class="">
         <Header/>
-        <el-button-group class="mt-5">
-            <el-button type="primary" @click="dialogVisible.value = true">{{ t('ui.actions.create') }}</el-button>
-            <el-button type="danger" @click="deleteAllConfirmation" plain>{{ t('ui.actions.deleteAll') }}</el-button>
-        </el-button-group>
-
-        <div v-loading="loading" class="flex min-h-[20rem] justify-center events-container">
-            <el-empty v-if="!loading && props.events && props.events.length === 0" :description="t('text.no_events')"/>
-            <div
-                class="grid w-full grid-rows-2 xs:grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                <event-card @delete="deleteConfirmation(event.id)" @open="handleOpen(event.id)" v-for="event in props.events"
-                            :key="event.id" :id="event.id" :title="event.title" :start_time="event.start_time"/>
+        <div class="wrapper mt-5 flex flex-col md:flex-row justify-between items-center">
+            <el-page-header @back="goBack" :title="t('ui.actions.back')">
+                <template #content>
+                    <span class="text-large font-600 mr-3">{{ event.id }} | {{ event.title }}</span>
+                </template>
+            </el-page-header>
+            <div class="right">
+                <el-button type="primary" :icon="CirclePlusFilled" size="default" @click="isEditing = true" v-if="!isEditing">{{ t('ui.actions.new_performance') }}</el-button>
             </div>
         </div>
 
-        <el-dialog v-model="dialogVisible.value" :title="t('ui.actions.createEvent')" width="500">
-            <el-form ref="formRef.value" :model="form" :rules="rules" class="flex justify-center flex-col" label-width="auto"
-                     status-icon>
-                <el-form-item :label="t('text.event_name')" prop="title">
-                    <el-input v-model="form.title" :placeholder="t('text.event_name')" />
-                </el-form-item>
-                <el-form-item :label="t('text.starting_time')" prop="start_time">
-                    <el-date-picker v-model="form.start_time" type="datetime" :placeholder="t('text.starting_time')"
-                                    style="width: 100%"/>
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <div class="dialog-footer">
-                    <el-button type="danger" @click="handleReset">{{ t('ui.actions.reset') }}</el-button>
-                    <el-button @click="dialogVisible.value = false">{{ t('ui.actions.cancel') }}</el-button>
-                    <el-button type="primary" @click="handleSubmit">{{ t('ui.actions.create') }}</el-button>
-                </div>
-            </template>
-            <div v-if="errorMessage.value" class="error-message">{{ errorMessage.value }}</div>
-        </el-dialog>
+        <div class="flex justify-center text-center mx-auto flex-col w-fit">
+            <p class="text-center">Current date and time</p>
+            <div class="time w-36 text-center px-6 py-4 border-2 rounded-md">
+                <span>{{ curTime }}</span>
+                <br>
+                <span>{{ curDate }}</span>
+            </div>
+        </div>
+        <div class="flex justify-center text-center mx-auto flex-col w-fit">
+            <p class="text-center">{{ t('text.event_start') }}</p>
+            <div class="time w-36 text-center px-6 py-4 border-2 rounded-md">
+                <span>{{ props.event.start_time }}</span>
+            </div>
+        </div>
+
+        <div v-loading="loading" class="wrapper">
+            <el-empty v-if="!loading && performances.length === 0" description="No performances yet"/>
+        </div>
+        <div class="wrapper flex w-full items-center justify-center flex-col">
+            <performance-item v-for="performance in performances" :key="performance.id" :performance="performance" class="w-[70%] border-2 p-6 rounded-lg"></performance-item>
+            <performance-item-form v-if="isEditing" :performance="newPerformance" @save="savePerformance" class="w-[70%] border-2 p-6 rounded-lg"></performance-item-form>
+        </div>
     </BaseLayout>
 </template>
 
 <style scoped>
-.events-container {
+.participant-input {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    position: relative;
-    margin-top: 20px;
-    width: 100%;
-    box-sizing: border-box;
+    align-items: center;
+    margin-bottom: 10px;
 }
 </style>

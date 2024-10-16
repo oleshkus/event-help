@@ -20,11 +20,23 @@ const i18n = createI18n({
     messages: {
         English: {
             text: {
+                title: 'Title',
+                duration: 'Duration',
+                description: 'Description',
+                participants: 'Participants',
+                hours: 'Hours',
+                minutes: 'Minutes',
+                location: 'Location',
+                start_time: 'Starting time',
+                end_time: 'Ending time',
+
                 event_name: 'Event name',
-                starting_time: 'Starting time',
+                event_start: 'Event starting time',
                 no_events: 'No events found',
                 deleteEvent: 'Do you want to delete this event?',
                 deleteAllEvents: 'Do you want to delete all events?',
+                deletePerformance: 'Do you want to delete this performance?',
+                deleteAllPerformances: 'Do you want to delete all performances?',
             },
             form: {
                 validation: {
@@ -53,6 +65,8 @@ const i18n = createI18n({
                     register: 'Register',
                 },
                 actions: {
+                    delete_performance: 'Delete performance',
+                    delete_all_performances: 'Delete all performances',
                     new_performance: 'New performance',
                     back: 'Back',
                     create: 'Create',
@@ -67,7 +81,6 @@ const i18n = createI18n({
                     close: 'Close',
                     open: 'Open',
                     confirm: 'Confirm',
-                    back: 'Back',
                     search: 'Search',
                     confirmDelete: 'Are you sure you want to delete this item?',
                     success: {
@@ -85,11 +98,23 @@ const i18n = createI18n({
         },
         Russian: {
             text: {
+                title: 'Название',
+                duration: 'Продолжительность',
+                description: 'Описание',
+                participants: 'Участники',
+                hours: 'Часы',
+                minutes: 'Минуты',
+                location: 'Место выхода',
+                start_time: 'Время начала',
+                end_time: 'Время окончания',
+
                 event_name: 'Название события',
-                starting_time: 'Время начала',
+                event_start_time: 'Время начала события',
                 no_events: 'События не найдены',
                 deleteEvent: 'Вы хотите удалить это событие?',
                 deleteAllEvents: 'Вы хотите удалить все события?',
+                deletePerformance: 'Вы хотите удалить это выступление?',
+                deleteAllPerformances: 'Вы хотите удалить все выступления?',
             },
             form: {
                 validation: {
@@ -118,6 +143,8 @@ const i18n = createI18n({
                     register: 'Регистрация',
                 },
                 actions: {
+                    delete_performance: 'Удалить выступление',
+                    delete_all_performances: 'Удалить все выступления',
                     new_performance: 'Новое событие',
                     back: 'Назад',
                     create: 'Создать',
@@ -132,7 +159,6 @@ const i18n = createI18n({
                     close: 'Закрыть',
                     open: 'Открыть',
                     confirm: 'Подтвердить',
-                    back: 'Назад',
                     search: 'Поиск',
                     confirmDelete: 'Вы уверены, что хотите удалить этот элемент?',
                     success: {

@@ -9,7 +9,7 @@ class Performance extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'location', 'participants', 'expected_duration', 'event_id', 'actual_start_time', 'actual_end_time', 'delay'];
+    protected $fillable = ['title', 'location', 'description', 'participants', 'expected_duration', 'event_id', 'actual_start_time', 'actual_end_time', 'delay'];
 
     public function event()
     {

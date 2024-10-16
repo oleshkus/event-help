@@ -26,6 +26,7 @@ class PerformanceController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'expected_duration' => 'required|integer|min:1',
+            'description' => 'string|max:255',
             'location' => 'nullable|string|max:255',
             'participants' => 'nullable|array',
         ]);

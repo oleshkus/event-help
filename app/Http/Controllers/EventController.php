@@ -60,6 +60,9 @@ class EventController extends Controller
     {
         return Inertia::render('Event', [
             'event' => $event,
+            'performances' => $event->performances,
+            'logged_in' => auth()->check(),
+            'user' => auth()->user(),
         ]);
     }
 
